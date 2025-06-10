@@ -33,9 +33,13 @@ export const scoreSlice = createSlice({
         state.ScoreItem.type = "";
         state.ScoreItem.subject = "";
         state.ScoreItem.createdAt = "";
+      },
+      setTotal: (state, action: PayloadAction<number>) => {
+        state.ScoreItem.total = action.payload; // เก็บจำนวนคำถามทั้งหมด
       }
+
     },
   });
 
-export const { addScore ,setExamInfo, resetScore} = scoreSlice.actions
+export const { addScore ,setExamInfo, resetScore ,setTotal} = scoreSlice.actions
 export default scoreSlice.reducer

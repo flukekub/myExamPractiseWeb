@@ -13,7 +13,7 @@ export default function Home() {
           <p className="text-xl font-light mb-8">An interactive platform to practice, prepare, and succeed in your exams.</p>
           <div className="flex justify-center gap-6">
             <Link href="myexams">
-              <button className="bg-white text-blue-700 font-semibold px-6 py-3 rounded-xl hover:bg-gray-100 transition">
+              <button className="bg-white text-blue-700 font-semibold px-6 py-3 rounded-xl hover:bg-gray-100 transition hover:scale-105">
                 Explore Subjects
               </button>
             </Link>
@@ -40,7 +40,7 @@ export default function Home() {
             { title: "Physics", desc: "Master fundamental concepts with categorized quizzes and exam-style problems." },
             { title: "Mock Exams", desc: "Full-length practice exams that simulate real test environments." },
           ].map((item, i) => (
-            <div key={i} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
+            <div key={i} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition hover:scale-110 ">
               <h3 className="text-2xl font-semibold mb-3 text-blue-700">{item.title}</h3>
               <p className="text-gray-600 mb-6">{item.desc}</p>
         
@@ -49,10 +49,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-6 text-center">
-        <p className="text-sm">&copy; {new Date().getFullYear()} ExamSphere. All rights reserved.</p>
-      </footer>
+      
+      
     </main>
   );
 }

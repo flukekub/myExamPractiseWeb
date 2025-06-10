@@ -27,12 +27,12 @@ const topics = [
   { name: "Introduction to Probability Distributions", type:"probabilityDistributions", icon: <GiConvergenceTarget size={28} /> },
 ];
 
-export default function MathTopics() {
+export default function MathTopics({params}: {params: {subject: string}}) {
   return (
     <main className="min-h-screen bg-white py-16 px-6">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">
-          Mathematics Topics
+          {params.subject} Topics
         </h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" >

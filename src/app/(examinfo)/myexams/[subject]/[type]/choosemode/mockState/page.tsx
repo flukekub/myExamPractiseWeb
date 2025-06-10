@@ -8,7 +8,8 @@ import Button from '@mui/material/Button';
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux";
-import  { setExamInfo , resetScore } from "@/redux/features/scoreSlice";
+import  { setExamInfo , resetScore, setTotal } from "@/redux/features/scoreSlice";
+
 
 export default function examsType({ params }: { params: { type: string } }) {
   const [exams, setExams] = useState<Exam[]>([])
@@ -23,7 +24,8 @@ export default function examsType({ params }: { params: { type: string } }) {
         if (res) {
           setExams(res.data)
           console.log("sus", res.data)
-
+          
+          dispatch(setTotal(res.data.length)); 
           dispatch(setExamInfo({
             type: params.type,
             subject: "math",
@@ -82,7 +84,8 @@ export default function examsType({ params }: { params: { type: string } }) {
               href="/myexams/math"
             >
               Go Back
-            </Button><Button
+            </Button>
+            <Button
               variant="contained"
               color="secondary"
               className="!rounded-full !px-8 !py-3 !text-lg !font-normal !text-white bg-gradient-to-r from-green-500 to-yellow-400 shadow-lg hover:from-green-600 hover:to-blue-400 transition duration-300"

@@ -1,38 +1,47 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useSession } from 'next-auth/react';
+import { Button } from '@mui/material';
+import getSubjects from '@/libs/getSubjects';
+import type { Subject } from '../../../../interface.ts';
 
 export default function MyExam() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const { data: session } = useSession();
-  useEffect
-  (() => {
-    console.log("Session data:", session);
-  });
+  const [load, setLoad] = useState(false);
 
-  const subjects = [
-    {
-      title: 'Mathematics',
-      description: 'Practice math problems by topics and levels.',
-      href: '/myexams/math',
-      color: 'from-pink-400 to-red-500',
-    },
-    {
-      title: 'Physics',
-      description: 'Master physics concepts with interactive exercises.',
-      href: '/exam/physics',
-      color: 'from-blue-400 to-blue-600',
-    },
-    {
-      title: 'Mock Exams',
-      description: 'Simulate real exams and test your readiness.',
-      href: '/exam/mock',
-      color: 'from-green-400 to-emerald-600',
-    },
+  const [ subjects, setSubjects ] = useState<Subject[]>([]);
+  
+  const handleSubmit = ( endpoint : string) => {
+    router.push(endpoint)
+  }
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      setLoad(true);
+      try {
+        const res= await getSubjects();
+        if (!subjects) {
+          console.error('Failed to fetch subjects');
+        }
+        setSubjects(res.data);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      } finally {
+        setLoad(false);
+      }
+    }
+    fetchSubjects();
+  }
+  , []);
+
+  
+  const colors = [
+      'from-pink-400 to-red-500',
+      'from-blue-400 to-blue-600',
+      'from-green-400 to-emerald-600',
   ];
 
   return (
@@ -42,21 +51,21 @@ export default function MyExam() {
           Choose Your Exam Category
         </h1>
 
-        {isPending && (
+        {load && (
           <div className="mb-6">
             <LinearProgress color="primary" />
           </div>
-        )}
+        )} 
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {subjects.map((subject, index) => (
+        <div className="grid md:grid-cols-3 gap-8">
+          {subjects&&subjects.map((subject, index) => (
             <div
               key={index}
-              className={`bg-gradient-to-r ${subject.color} text-white rounded-2xl shadow-lg p-8 hover:scale-105 transition-transform cursor-pointer`}
-              onClick={() => startTransition(() => router.push(subject.href))}
+              className={`bg-gradient-to-r ${colors[index]} text-white rounded-2xl shadow-lg p-8 hover:scale-105 transition-transform cursor-pointer`}
+              onClick={() => {setLoad(true); handleSubmit(`/myexams/${subject.title}`)}}
             >
-              <h2 className="text-2xl font-semibold mb-3">{subject.title}</h2>
-              <p className="text-sm opacity-90">{subject.description}</p>
+                <h2 className="text-2xl font-semibold mb-3">{subject.title}</h2>
+                <p className="text-sm opacity-90">{subject.description}</p>
             </div>
           ))}
         </div>
@@ -64,3 +73,5 @@ export default function MyExam() {
     </main>
   );
 }
+
+

@@ -18,3 +18,9 @@ export interface Score {
     subject: string;
     createdAt: string;
 }
+
+export interface Subject {
+    _id: string;
+    title: string;
+    description: string;
+}
