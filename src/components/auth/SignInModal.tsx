@@ -27,12 +27,7 @@ const SignInModal = () => {
         console.log("Sign in successful");
         router.push("/"); // เปลี่ยนเส้นทางไปหน้าแรก
       } else {
-        toast("Login failed .", {
-          style: {
-            color: "red", // สีแดง
-            fontWeight: "bold",
-          },
-        });
+        
         console.error(data.error || "Sign in failed");
       }
     } catch (err) {
