@@ -1,12 +1,14 @@
 // components/Navbar.tsx
-'use client';
+"use client";
 
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { FaBookOpen, FaHome, FaUser } from 'react-icons/fa';
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { FaBookOpen, FaHome, FaUser, FaUserCheck } from "react-icons/fa";
+import useCustomAuth from "@/libs/customHooks/useCustomAuth";
 
 export default function menubar() {
-  const { data: session } = useSession();
+  
+  const customAuth = useCustomAuth();
 
   return (
     <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-50">
@@ -16,17 +18,42 @@ export default function menubar() {
       </div>
 
       <div className="flex space-x-6 text-gray-700 font-medium">
-        <Link href="/" className="flex items-center gap-1 hover:text-blue-600 transition">
+        <Link
+          href="/"
+          className="flex items-center gap-1 hover:text-blue-600 transition"
+        >
           <FaHome /> Home
         </Link>
-        <Link href="/myexams" className="flex items-center gap-1 hover:text-blue-600 transition">
+        <Link
+          href="/myexams"
+          className="flex items-center gap-1 hover:text-blue-600 transition"
+        >
           <FaBookOpen /> My Exams
         </Link>
-        {session?<Link href="/api/auth/signout" className="flex items-center gap-1 hover:text-blue-600 transition">
-          <FaUser /> Sign out
-        </Link>:<Link href="/api/auth/signin" className="flex items-center gap-1 hover:text-blue-600 transition">
-          <FaUser /> Sign in
-        </Link>}
+
+        {customAuth ? (
+          <Link
+            href="auth/signout"
+            className="flex items-center gap-1 hover:text-blue-600 transition"
+          >
+            <FaUser /> Sign out
+          </Link>
+        ) : (
+          <>
+            <Link
+              href="auth/signup"
+              className="flex items-center gap-1 hover:text-blue-600 transition"
+            >
+              <FaUser /> Sign up
+            </Link>
+            <Link
+              href="auth/signin"
+              className="flex items-center gap-1 hover:text-blue-600 transition"
+            >
+              <FaUserCheck /> Sign in
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );
