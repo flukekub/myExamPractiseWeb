@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Menubar from '../components/menubar'; // ปรับ path ให้ตรงกับตำแหน่งจริง
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/authOptions";
+import { authOptions } from "./[...nextauth]/authOptions";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import ReduxProvider from "@/redux/ReduxProvider";
-import Footer from "@/components/footer";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,11 +25,8 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
-          <NextAuthProvider session={session}>
-            <Menubar />
-            {children}
-            <Footer />
-          </NextAuthProvider>
+          <NextAuthProvider session={session}>{children}</NextAuthProvider>
+          
         </ReduxProvider>
       </body>
     </html>
