@@ -1,6 +1,6 @@
 export default async function getExamsByType(type: string) {
     try {
-        const response = await fetch(`http://localhost:5000/api/v1/exams/type/${type}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams/type/${type}`, {
             method: "GET",
         });
 

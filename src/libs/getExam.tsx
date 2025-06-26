@@ -1,6 +1,6 @@
 export default async function getExam(id: string) {
     try {
-        const response = await fetch(`http://localhost:5000/api/v1/exams/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams/${id}`, {
             method: "GET",
         });
 

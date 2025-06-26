@@ -1,6 +1,6 @@
 export default async function createScore(score: number, total: number, subject: string, type: string) {
     try {
-        const response = await fetch(`http://localhost:5000/api/v1/scores`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scores`, {
             method: "POST",
         });
 

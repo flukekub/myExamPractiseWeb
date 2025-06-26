@@ -7,7 +7,7 @@ import Footer from "@/components/footer";
 
 export default function Home() {
   return (
-    <main className="bg-white text-gray-800">
+    <main className="bg-white text-gray-800 ">
       <Menubar />
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-24 px-6 text-center">
@@ -35,7 +35,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="services" className="py-20 bg-gray-50 px-6">
+      <section id="services" className="py-10 bg-gray-50 px-6">
         <div className="text-center mb-14">
           <h2 className="text-4xl font-bold mb-4 text-gray-800">
             What You Can Learn
@@ -79,3 +79,4 @@ export default function Home() {
     </main>
   );
 }
+

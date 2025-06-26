@@ -19,5 +19,5 @@ export async function POST(req: NextRequest) {
     { expiresIn: "7d" }
   );
 
-  return NextResponse.json({ token });
+  return NextResponse.json({ token , role: user.role});
 }

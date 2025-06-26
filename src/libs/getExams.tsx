@@ -1,6 +1,6 @@
 export default async function getDentists() {
     try {
-        const response = await fetch(`http://localhost:5000/api/v1/exams`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams`, {
             method: "GET",
             
         });

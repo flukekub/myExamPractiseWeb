@@ -24,6 +24,7 @@ const SignInModal = () => {
         // เก็บ token ใน cookie ด้วย js-cookie (หมดอายุ 7 วัน)
         Cookies.set("token", data.token, { expires: 7, path: "/" });
         Cookies.set("username", email, { expires: 7, path: "/" });
+        Cookies.set("isAdmin", data.role === "admin" ? "true" : "false", { expires: 7, path: "/" });
         console.log("Sign in successful");
         router.push("/"); // เปลี่ยนเส้นทางไปหน้าแรก
       } else {
