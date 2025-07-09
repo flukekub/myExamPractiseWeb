@@ -1,8 +1,7 @@
-export default async function getDentists() {
+export default async function getExamsByType(type: string) {
     try {
-        const response = await fetch(`http://localhost:5000/api/v1/exams`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams/type/${type}`, {
             method: "GET",
-            
         });
 
         const data = await response.json();
@@ -14,7 +13,7 @@ export default async function getDentists() {
         return data;
     } 
     catch (error: any) {
-        console.error("Dentists fetch error:", error.message || error);
+        console.error("Exams fetch error:", error.message || error);
         return null;
     }
-};
+}
