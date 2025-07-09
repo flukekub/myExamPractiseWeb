@@ -28,7 +28,7 @@ const SignInModal = () => {
         console.log("Sign in successful");
         router.push("/"); // เปลี่ยนเส้นทางไปหน้าแรก
       } else {
-        toast.error("Sign in failed: " + (data.error || "Unknown error"));
+        //toast.error("Sign in failed: " + (data.error || "Unknown error"));
         console.error(data.error || "Sign in failed");
       }
     } catch (err) {
