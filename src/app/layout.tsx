@@ -5,7 +5,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./[...nextauth]/authOptions";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import ReduxProvider from "@/redux/ReduxProvider";
-//import { Toaster } from "@/components/ui/sonner";
+import dynamic from "next/dynamic";
+
+const Toaster = dynamic(
+  () => import("@/components/ui/sonner").then((mod) => mod.Toaster),
+  {
+    ssr: false,
+  }
+);
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,10 +35,8 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ReduxProvider>
           <NextAuthProvider session={session}>
-            <>
-              {children}
-              
-            </>
+            {children}
+            <Toaster />
           </NextAuthProvider>
         </ReduxProvider>
       </body>
