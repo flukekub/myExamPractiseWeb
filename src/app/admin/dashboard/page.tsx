@@ -5,13 +5,8 @@ import ManageExamDialog from "@/components/ManageExamDialog";
 export default function DashboardPage() {
   const [openExamDialog, setOpenExamDialog] = useState(false);
 
-  const handleSaveExam = (data: { name: string; topic: string; subject: string; answer: string; image: File | null }) => {
-    // TODO: handle save logic (เช่น ส่งไป backend หรืออัปเดต state)
-    console.log("Saved exam:", data);
-  };
-
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-10 px-4">
+    <div className="flex flex-col items-center  bg-gray-50 py-10 px-4">
       <h1 className="text-3xl font-bold text-blue-900 mb-8">Admin Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mb-10">
         <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
@@ -39,7 +34,7 @@ export default function DashboardPage() {
           className="flex-1 bg-blue-600 text-white rounded-lg py-3 text-center font-semibold hover:bg-blue-700 transition"
           onClick={() => setOpenExamDialog(true)}
         >
-          Manage Exams
+          Create Exams
         </button>
         <a
           href="/admin/reports"
@@ -51,7 +46,7 @@ export default function DashboardPage() {
       <ManageExamDialog
         open={openExamDialog}
         onClose={() => setOpenExamDialog(false)}
-        onSave={handleSaveExam}
+        onSave={() => setOpenExamDialog(false)}
       />
     </div>
   );

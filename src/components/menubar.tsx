@@ -7,11 +7,13 @@ import { FaBookOpen, FaHome, FaUser, FaUserCheck } from "react-icons/fa";
 import useCustomAuth from "@/libs/customHooks/useCustomAuth";
 import { useRouter } from "next/navigation";
 
-export default function menubar() {     
+export default function menubar() {
   const customAuth = useCustomAuth();
   const router = useRouter();
 
-  function handleAdminClick(event: React.MouseEvent<HTMLSpanElement, MouseEvent>): void {
+  function handleAdminClick(
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ): void {
     event.preventDefault();
     if (customAuth?.isAdmin) {
       router.push("/admin/dashboard");
@@ -26,7 +28,12 @@ export default function menubar() {
         <FaBookOpen className="text-2xl" />
         <span>Online Exam</span>
         {customAuth?.isAdmin && (
-          <span onClick={handleAdminClick} className="text-sm mt-1 text-gray-500">(Admin)</span>
+          <Link
+            href="/admin/dashboard"
+            className="text-sm mt-1 text-gray-500 hover:text-blue-600 transition"
+          >
+            (Admin)
+          </Link>
         )}
       </div>
 

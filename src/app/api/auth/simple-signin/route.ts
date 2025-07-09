@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
-import jwt from "jsonwebtoken";
+import userLogin from "@/libs/api/userLogin";
 
 const uri = process.env.MONGODB_URI!;
 const client = new MongoClient(uri);
@@ -13,11 +13,9 @@ export async function POST(req: NextRequest) {
 
   if (!user) return NextResponse.json({ error: "Email not found" }, { status: 401 });
 
-  const token = jwt.sign(
-    { email: user.email, id: user._id },
-    process.env.NEXTAUTH_SECRET!,
-    { expiresIn: "7d" }
-  );
+  const loginResponse = await userLogin(email);
+  const token = loginResponse.token;
+
 
   return NextResponse.json({ token , role: user.role});
 }

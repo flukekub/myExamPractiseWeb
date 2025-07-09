@@ -1,47 +1,45 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import LinearProgress from '@mui/material/LinearProgress';
-import { useSession } from 'next-auth/react';
-import { Button } from '@mui/material';
-import getSubjects from '@/libs/getSubjects';
-import type { Subject } from '../../../../interface.ts';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import LinearProgress from "@mui/material/LinearProgress";
+import { useSession } from "next-auth/react";
+import { Button } from "@mui/material";
+import getSubjects from "@/libs/api/getSubjects";
+import type { Subject } from "../../../../interface.ts";
 
 export default function MyExam() {
   const router = useRouter();
   const [load, setLoad] = useState(false);
 
-  const [ subjects, setSubjects ] = useState<Subject[]>([]);
-  
-  const handleSubmit = ( endpoint : string) => {
-    router.push(endpoint)
-  }
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+
+  const handleSubmit = (endpoint: string) => {
+    router.push(endpoint);
+  };
 
   useEffect(() => {
     const fetchSubjects = async () => {
       setLoad(true);
       try {
-        const res= await getSubjects();
+        const res = await getSubjects();
         if (!subjects) {
-          console.error('Failed to fetch subjects');
+          console.error("Failed to fetch subjects");
         }
         setSubjects(res.data);
       } catch (error) {
-        console.error('Error fetching subjects:', error);
+        console.error("Error fetching subjects:", error);
       } finally {
         setLoad(false);
       }
-    }
+    };
     fetchSubjects();
-  }
-  , []);
+  }, []);
 
-  
   const colors = [
-      'from-pink-400 to-red-500',
-      'from-blue-400 to-blue-600',
-      'from-green-400 to-emerald-600',
+    "from-pink-400 to-red-500",
+    "from-blue-400 to-blue-600",
+    "from-green-400 to-emerald-600",
   ];
 
   return (
@@ -55,23 +53,25 @@ export default function MyExam() {
           <div className="mb-6">
             <LinearProgress color="primary" />
           </div>
-        )} 
+        )}
 
         <div className="grid md:grid-cols-3 gap-8">
-          {subjects&&subjects.map((subject, index) => (
-            <div
-              key={index}
-              className={`bg-gradient-to-r ${colors[index]} text-white rounded-2xl shadow-lg p-8 hover:scale-105 transition-transform cursor-pointer`}
-              onClick={() => {setLoad(true); handleSubmit(`/myexams/${subject.title}`)}}
-            >
+          {subjects &&
+            subjects.map((subject, index) => (
+              <div
+                key={index}
+                className={`bg-gradient-to-r ${colors[index]} text-white rounded-2xl shadow-lg p-8 hover:scale-105 transition-transform cursor-pointer`}
+                onClick={() => {
+                  setLoad(true);
+                  handleSubmit(`/myexams/${subject.title}`);
+                }}
+              >
                 <h2 className="text-2xl font-semibold mb-3">{subject.title}</h2>
                 <p className="text-sm opacity-90">{subject.description}</p>
-            </div>
-          ))}
+              </div>
+            ))}
         </div>
       </div>
     </main>
   );
 }
-
-

@@ -3,48 +3,51 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import ImageIcon from "@mui/icons-material/Image";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, use, useEffect, useState } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import { FormControl, MenuItem } from "@mui/material";
-import { Subject } from "../../interface";
-import getSubjects from "@/libs/getSubjects";
+import { Exam, Subject } from "../../interface";
+import getSubjects from "@/libs/api/getSubjects";
+import getTypeExam from "@/libs/api/getTypeExam";
 
 interface CreateExamFormProps {
-  onSubmit: (data: {
-    topic: string;
-    subject: string;
-    name: string;
-    answer: string;
-    image: File | null;
-    difficulty?: string;
-  }) => void;
-  initialValues?: {
-    name?: string;
-    subject?: string;
-    topic?: string;
-    answer?: string;
-    difficulty?: string;
-  };
+  onSubmit: (data: ExamInputType) => void;
+}
+export interface ExamInputType {
+  name: string;
+  subject: string;
+  topic: string;
+  answer: string;
+  image: File | null;
+  difficulty?: string;
+  answerImage: File | null;
+  choices: string;
 }
 
-export default function ExamForm({
-  onSubmit,
-  initialValues,
-}: CreateExamFormProps) {
-  const { control, handleSubmit, reset } = useForm({
-    defaultValues: {
-      name: initialValues?.name || "",
-      subjects: initialValues?.subject || "",
-      topics: initialValues?.topic || "",
-      answer: initialValues?.answer || "",
-      difficulty: initialValues?.difficulty || "",
-    },
+const initialValues: ExamInputType = {
+  name: "",
+  subject: "",
+  topic: "",
+  answer: "",
+  image: null,
+  difficulty: "",
+  answerImage: null,
+  choices: "",
+};
+
+export default function ExamForm({ onSubmit }: CreateExamFormProps) {
+  const { control, handleSubmit, reset, watch } = useForm({
+    defaultValues: initialValues,
   });
-  const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [imageAnswerPreview, setImageAnswerPreview] = useState<string | null>(
+    null
+  );
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [load, setLoad] = useState(false);
+  const selectedSubject = watch("subject");
+  const [topics, setTopics] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -61,25 +64,34 @@ export default function ExamForm({
         setLoad(false);
       }
     };
+
     fetchSubjects();
   }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setImage(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  };
+  useEffect(() => {
+    const fetchTypeExam = async () => {
+      if (!selectedSubject) return;
+      try {
+        const res = await getTypeExam(selectedSubject);
+        if (!res) {
+          console.error("Failed to fetch exam types");
+        }
+        setTopics(res.data);
+      } catch (error) {
+        console.error("Error fetching exam types:", error);
+      }
+    };
+    fetchTypeExam();
+  }, [selectedSubject]);
 
-  const onFormSubmit = (data: any) => {
-    onSubmit({ ...data, image });
+  const onFormSubmit = (data: ExamInputType) => {
+    if (!data.image) {
+      // Optionally, you can show an error or return early
+      return;
+    }
+    onSubmit({ ...data });
+    console.log("Submitted data:", data);
     reset();
-    setImage(null);
     setPreview(null);
   };
 
@@ -94,7 +106,7 @@ export default function ExamForm({
       />
       <div className="flex gap-4">
         <Controller
-          name="subjects"
+          name="subject"
           control={control}
           render={({ field }) => (
             <FormControl fullWidth>
@@ -122,7 +134,7 @@ export default function ExamForm({
           )}
         />
         <Controller
-          name="topics"
+          name="topic"
           control={control}
           render={({ field }) => (
             <FormControl fullWidth>
@@ -134,21 +146,48 @@ export default function ExamForm({
                 value={field.value}
                 onChange={field.onChange}
               >
-                {/* ใส่ options ของ topic ตาม subject ที่เลือก */}
+                {load ? (
+                  <MenuItem value="" disabled>
+                    Loading topics...
+                  </MenuItem>
+                ) : (
+                  topics.map((topic) => (
+                    <MenuItem key={topic} value={topic}>
+                      {topic}
+                    </MenuItem>
+                  ))
+                )}
               </Select>
+            </FormControl>
+          )}
+        />
+        <Controller
+          name="topic"
+          control={control}
+          render={({ field }) => (
+            <FormControl fullWidth>
+              <TextField label="new topic ?" fullWidth {...field} />
             </FormControl>
           )}
         />
       </div>
       <div className="flex gap-4">
-        <Controller
-          name="answer"
-          control={control}
-          render={({ field }) => (
-            <TextField label="Answer" fullWidth {...field} />
-          )}
-        />
-
+        <div className="flex gap-4">
+          <Controller
+            name="choices"
+            control={control}
+            render={({ field }) => (
+              <TextField label="กี่ตัวเลือก" fullWidth {...field} />
+            )}
+          />
+          <Controller
+            name="answer"
+            control={control}
+            render={({ field }) => (
+              <TextField label="Answer" fullWidth {...field} />
+            )}
+          />
+        </div>
         <Controller
           name="difficulty"
           control={control}
@@ -170,21 +209,93 @@ export default function ExamForm({
           )}
         />
       </div>
-
-      <div>
-        <label className="block mb-1 text-gray-700">Upload Exam</label>
-        <IconButton color="primary" component="label">
-          <ImageIcon />
-          <input
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleImageChange}
-          />
-        </IconButton>
-        {preview && (
-          <img src={preview} alt="Preview" className="mt-2 max-h-40 rounded" />
-        )}
+      <div className="flex  gap-10">
+        <Controller
+          name="image"
+          control={control}
+          rules={{ required: "กรุณาอัปโหลดรูปภาพข้อสอบ" }}
+          render={({ field, fieldState }) => (
+            <div>
+              <label className="block mb-1 text-gray-700">Upload Exam</label>
+              <IconButton color="primary" component="label">
+                <ImageIcon />
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    field.onChange(file);
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () =>
+                        setPreview(reader.result as string);
+                      reader.readAsDataURL(file);
+                    } else {
+                      setPreview(null);
+                    }
+                  }}
+                />
+              </IconButton>
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="mt-2 max-h-40 rounded"
+                />
+              )}
+              {fieldState.error && (
+                <div className="text-red-500 text-sm mt-1">
+                  {fieldState.error.message}
+                </div>
+              )}
+            </div>
+          )}
+        />
+        <Controller
+          name="answerImage"
+          control={control}
+          rules={{ required: "กรุณาอัปโหลดเฉลยข้อสอบ" }}
+          render={({ field, fieldState }) => (
+            <div>
+              <label className="block mb-1 text-gray-700">
+                Upload solution
+              </label>
+              <IconButton color="primary" component="label">
+                <ImageIcon />
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    field.onChange(file);
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () =>
+                        setImageAnswerPreview(reader.result as string);
+                      reader.readAsDataURL(file);
+                    } else {
+                      setImageAnswerPreview(null);
+                    }
+                  }}
+                />
+              </IconButton>
+              {imageAnswerPreview && (
+                <img
+                  src={imageAnswerPreview}
+                  alt="Preview"
+                  className="mt-2 max-h-40 rounded"
+                />
+              )}
+              {fieldState.error && (
+                <div className="text-red-500 text-sm mt-1">
+                  {fieldState.error.message}
+                </div>
+              )}
+            </div>
+          )}
+        />
       </div>
       <Button type="submit" variant="contained" color="primary">
         Save

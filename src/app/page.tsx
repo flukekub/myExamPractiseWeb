@@ -10,14 +10,18 @@ export default function Home() {
     <main className="bg-white text-gray-800 ">
       <Menubar />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-24 px-6 text-center">
+      <section
+        className="relative bg-cover bg-center text-white py-24 px-6 text-center"
+        style={{
+          backgroundImage: "url('/banner.png')",
+        }}
+      >
         <div className="max-w-3xl mx-auto">
           <h1 className="text-5xl font-extrabold leading-tight mb-6 drop-shadow-md">
-            Welcome to ExamSphere
+             ExamSphere
           </h1>
           <p className="text-xl font-light mb-8">
-            An interactive platform to practice, prepare, and succeed in your
-            exams.
+            แหล่งรวมข้อสอบ สำหรับสอบเข้ามหาวิทยาลัย (TCAS) 
           </p>
           <div className="flex justify-center gap-6">
             <Link href="myexams">
@@ -74,9 +78,8 @@ export default function Home() {
           ))}
         </div>
       </section>
-      
+
       <Footer />
     </main>
   );
 }
-
