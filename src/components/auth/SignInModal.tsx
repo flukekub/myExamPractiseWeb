@@ -29,7 +29,6 @@ const SignInModal = () => {
         router.push("/"); // เปลี่ยนเส้นทางไปหน้าแรก
       } else {
         toast.error("Sign in failed: " + (data.error || "Unknown error"));
-        console.error(data.error || "Sign in failed");
       }
     } catch (err) {
       console.error("An error occurred:", err);

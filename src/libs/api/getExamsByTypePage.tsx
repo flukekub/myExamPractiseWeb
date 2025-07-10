@@ -1,8 +1,14 @@
-export default async function getExamsByType(type: string) {
+export default async function getExamsByType(type: string, page: number) {
     try {
         
+        const limit = 10; // Set a default limit for pagination
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams/type/${type}`, {
+        const params = new URLSearchParams({
+            page: page.toString(),
+            limit: limit.toString()
+        });
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams/type/${type}?${params}`, {
             method: "GET",
         });
         

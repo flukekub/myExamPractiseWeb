@@ -5,13 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { setExamInfo, resetScore } from "@/redux/features/scoreSlice";
 import { useRouter } from "next/navigation";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useState } from "react";
+import { use, useState } from "react";
 
 export default function ChooseModePage({
-  params,
+  params:paramsPromise,
 }: {
-  params: { type: string };
+  params: Promise<{ type: string }>;
 }) {
+  const params = use(paramsPromise); // Unwrap the params Promise
   const pathname = usePathname();
   const dispatch = useDispatch();
   const ScoreState = useSelector((state: RootState) => state.scoreState);

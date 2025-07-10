@@ -6,6 +6,7 @@ import { authOptions } from "./[...nextauth]/authOptions";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import ReduxProvider from "@/redux/ReduxProvider";
 import dynamic from "next/dynamic";
+import ToasterProvider from "@/providers/ToasterProvider"
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,6 +32,7 @@ export default async function RootLayout({
         <ReduxProvider>
           <NextAuthProvider session={session}>
             {children}
+            <ToasterProvider />
           </NextAuthProvider>
         </ReduxProvider>
       </body>

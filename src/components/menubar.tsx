@@ -61,13 +61,13 @@ export default function menubar() {
         ) : (
           <>
             <Link
-              href="auth/signup"
+              href={`${process.env.NEXT_PUBLIC_URL}/auth/signup`}
               className="flex items-center gap-1 hover:text-blue-600 transition"
             >
               <FaUser /> Sign up
             </Link>
             <Link
-              href="auth/signin"
+              href={`${process.env.NEXT_PUBLIC_URL}/auth/signin`}
               className="flex items-center gap-1 hover:text-blue-600 transition"
             >
               <FaUserCheck /> Sign in
