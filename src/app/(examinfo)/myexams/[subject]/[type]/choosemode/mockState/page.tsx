@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import type { Exam } from "../../../../../../../../interface";
 import getExamsByType from "@/libs/api/getExamsByType";
 import { DiEnvato } from "react-icons/di";
@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setExamInfo, resetScore, setTotal } from "@/redux/features/scoreSlice";
 
-export default function examsType({ params }: { params: { subject:string, type: string } }) {
+export default function examsType({ params:paramsPromise }: { params: Promise<{ subject:string, type: string } >}) {
+  const params = use(paramsPromise); // Unwrap the params Promise
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();

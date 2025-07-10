@@ -1,7 +1,7 @@
-export default async function getExam(id: string) {
+export default async function getExam(id: string, type: string) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/exams/id/${type}/${id}`,
       {
         method: "GET",
       }

@@ -7,53 +7,42 @@ import Image from "next/image";
 import Button from "@mui/material/Button";
 import AnswerButton from "@/components/answerBotton";
 import { ImagePreview } from "@/libs/previewImage";
+import { set } from "react-hook-form";
 
 export default function Exam({
-  params,
+  params: paramsPromise,
 }: {
-  params: { subject:string ,id: string; type: string };
+  params: Promise<{ subject: string; id: string; type: string }>;
 }) {
+  const params = use(paramsPromise); // Unwrap the params Promise
   const [exam, setExam] = useState<Exam | null>(null);
-
+  const [exams, setExams] = useState<Exam[]>([]);
   const [previousId, setPreviousId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
-
+  
   useEffect(() => {
+    
     console.log("Exam ID:", params.id);
     console.log("Exam Type:", params.type);
     try {
-      const fetchExams = async () => {
-        const res = await getExamsByType(params.type);
-        const res2 = await getExam(params.id);
-        if (res && res2) {
+      const fetchExam = async () => {
+        const res2 = await getExam(params.id,params.type);
+        if (res2) {
           console.log("Exam Data:", res2.data);
-          setExam(res2.data);
-          const index = res.data.findIndex(
-            (exam: Exam) => exam._id === params.id
-          );
-          if (index !== 0) {
-            setPreviousId(res.data[index - 1]?._id || null);
-          } else if (index !== res.data.length - 1) {
-            setNextId(res.data[index + 1]?._id || null);
-          } else {
-            console.log("No previous & next exam found.");
-          }
+          setExam(res2.data.currentExam);
+          if( res2.data.previousExamId) 
+            setPreviousId(res2.data.previousExamId)
+          if( res2.data.nextExamId)
+            setNextId(res2.data.nextExamId);
         } else {
           console.error("No data found for the specified type.");
         }
       };
-      fetchExams();
+      fetchExam();
     } catch (error) {
       console.error("Error fetching exams:", error);
     }
-  }, [params.id, params.type]);
-  useEffect(() => {
-    if (exam) {
-      console.log("Fetched exam:", exam);
-    } else {
-      console.log("No exam data available.");
-    }
-  }, [exam]);
+  }, []);
 
   return (
     <div className="min-h-screen  bg-white py-12 px-4 sm:px-6 lg:px-8  ">
@@ -68,7 +57,12 @@ export default function Exam({
           />
         )}
       </div>
-      {exam&&<AnswerButton choiceLength={exam.choices} answer={exam?.answer as string} />}
+      {exam && (
+        <AnswerButton
+          choiceLength={exam.choices}
+          answer={exam?.answer as string}
+        />
+      )}
       <div className="flex justify-center gap-10 mt-10">
         {previousId !== null && (
           <Button

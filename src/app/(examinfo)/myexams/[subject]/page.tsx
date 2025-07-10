@@ -2,13 +2,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import getTypeExam from "@/libs/api/getTypeExam";
+import { use } from "react";
 
 export default function MathTopics({
-  params,
+  params: paramsPromise,
 }: {
-  params: { subject: string };
+  params: Promise<{ subject: string }>;
 }) {
+  const params = use(paramsPromise); // Unwrap the params Promise
   const [topics, setTopics] = useState<[]>([]);
+
   useEffect(() => {
     async function fetchTopics() {
       try {
@@ -36,7 +39,7 @@ export default function MathTopics({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {topics.map((topic, index) => (
             <Link
-              href={params.subject + "/" + topic+ "/choosemode"}
+              href={params.subject + "/" + topic + "/choosemode"}
               key={index}
             >
               <div
