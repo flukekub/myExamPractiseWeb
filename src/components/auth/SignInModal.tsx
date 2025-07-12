@@ -93,7 +93,8 @@ const SignInModal = () => {
             )}
             <button
               type="submit"
-              className="w-full bg-gray-400 hover:bg-gray-500 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50"
+              className="w-full bg-gray-400 hover:bg-gray-600 text-white font-medium py-3 px-4  transition-all duration-200 disabled:opacity-50 rounded-md"
+              
               disabled={!email}
             >
               Sign in

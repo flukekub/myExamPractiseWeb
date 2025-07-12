@@ -61,7 +61,7 @@ export default function AnswerButton({
 
   if (parseInt(choiceLength) === 0) {
     return (
-      <div className="flex justify-center items-center gap-4 mt-10">
+      <div className="flex justify-center items-center gap-4 mt-5">
         <TextField
           label="Your Answer"
           variant="outlined"
@@ -75,7 +75,7 @@ export default function AnswerButton({
           <Button
             variant="contained"
             color="primary"
-            className="!rounded-full !px-4 !py-2 !text-lg !bg-red-500 !font-medium"
+            className="!rounded-full !px-4 !py-2 !text-lg !bg-red-500 "
             onClick={() => {
               handleCancelAnswer();
               setIsConfirmed(false);
@@ -87,7 +87,7 @@ export default function AnswerButton({
           <Button
             variant="contained"
             color="primary"
-            className="!rounded-full !px-4 !py-2 !text-lg !font-medium"
+            className="!rounded-full !px-4 !py-2 !text-lg "
             onClick={() => {
               handleCorrectAnswer(userAnswer);
               setIsConfirmed(true);

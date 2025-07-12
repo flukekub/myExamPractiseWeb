@@ -3,11 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useSession } from "next-auth/react";
-import { Button } from "@mui/material";
 import getSubjects from "@/libs/api/getSubjects";
 import type { Subject } from "../../../../interface.ts";
-import { ProgressOptimize } from "@/components/ui/ProgressOptimize";
+
 
 export default function MyExam() {
   const router = useRouter();
@@ -49,13 +47,13 @@ export default function MyExam() {
         <h1 className="text-4xl font-bold text-center mb-12 text-gray-800">
           Choose Your Exam Category
         </h1>
-
-        {load && (
-          <div className="mb-6 flex w-[100%] justify-center ">
-            <ProgressOptimize speed={4} />
-          </div>
-        )}
-
+        {
+          load && (
+            <div className="mb-6">
+              <LinearProgress color="primary" />
+            </div>
+          )
+        }
         <div className="grid md:grid-cols-3 gap-8">
           {subjects &&
             subjects.map((subject, index) => (

@@ -6,6 +6,7 @@ import { setExamInfo, resetScore } from "@/redux/features/scoreSlice";
 import { useRouter } from "next/navigation";
 import LinearProgress from "@mui/material/LinearProgress";
 import { use, useState } from "react";
+import { useStopwatch } from "@/providers/StopWatchProvider";
 
 export default function ChooseModePage({
   params:paramsPromise,
@@ -18,9 +19,11 @@ export default function ChooseModePage({
   const ScoreState = useSelector((state: RootState) => state.scoreState);
   const router = useRouter();
   const [ load, setLoad ] = useState(false);
+  const { reset } = useStopwatch();
 
   function handlePractice(e: React.MouseEvent) {
     e.preventDefault();
+    reset(); // Reset the stopwatch state
     setLoad(true);
     dispatch(resetScore());
     dispatch(
