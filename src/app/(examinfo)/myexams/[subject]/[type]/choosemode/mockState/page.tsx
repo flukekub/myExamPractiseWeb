@@ -9,8 +9,13 @@ import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setExamInfo, resetScore, setTotal } from "@/redux/features/scoreSlice";
+import Stopwatch from "@/components/Timer";
 
-export default function examsType({ params:paramsPromise }: { params: Promise<{ subject:string, type: string } >}) {
+export default function examsType({
+  params: paramsPromise,
+}: {
+  params: Promise<{ subject: string; type: string }>;
+}) {
   const params = use(paramsPromise); // Unwrap the params Promise
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,17 +28,14 @@ export default function examsType({ params:paramsPromise }: { params: Promise<{ 
         const res = await getExamsByType(params.type);
         if (res) {
           setExams(res.data);
-          console.log("sus", res.data);
-
           dispatch(setTotal(res.data.length));
           dispatch(
             setExamInfo({
               type: params.type,
-              subject: "math",
+              subject: params.subject,
               createdAt: new Date().toISOString(),
             })
           );
-
           console.log("ScoreState:", ScoreState);
         } else {
           console.error("No data found for the specified type.");
@@ -52,11 +54,13 @@ export default function examsType({ params:paramsPromise }: { params: Promise<{ 
   }, [ScoreState]);
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-blue-900 mb-6">
-        Exams for {decodeURIComponent(params.type)}
-      </h1>
-
+    <div className="min-h-screen bg-white py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-white via-blue-50 to-gray-100">
+      <div className="flex width-full justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-blue-900 ">
+          Exams for {decodeURIComponent(params.type)}
+        </h1>
+        <Stopwatch />
+      </div>
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>

@@ -7,7 +7,7 @@ import { FaCheckCircle, FaEye } from "react-icons/fa";
 import { ImagePreview } from "@/libs/previewImage";
 import { ShowSolutionButton } from "@/components/showSolutionBotton";
 import PaginationExam from "@/components/ui/PaginationExam";
-import { ProgressOptimize } from "@/components/ui/ProgressOptimize";
+import CircularWithValueLabel from "@/components/CircularProgressWithLabel";
 
 export default function exams({
   params: paramsPromise,
@@ -21,6 +21,15 @@ export default function exams({
   const [pages, setPages] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  const [progress, setProgress] = useState(10);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+    }, 800);
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchExams = async () => {
@@ -133,7 +142,7 @@ export default function exams({
         </div>
       </div>
       {loading ? (
-        <ProgressOptimize speed={10} />
+        <CircularWithValueLabel/>
       ) : (
         <ul>
           {exams.map((exam) => (

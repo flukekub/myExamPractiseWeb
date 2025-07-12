@@ -3,11 +3,12 @@ import { use, useEffect, useState } from "react";
 import type { Exam } from "../../../../../../../../../interface";
 import getExamsByType from "@/libs/api/getExamsByType";
 import getExam from "@/libs/api/getExam";
-import Image from "next/image";
+import Stopwatch from "@/components/Timer";
 import Button from "@mui/material/Button";
 import AnswerButton from "@/components/answerBotton";
 import { ImagePreview } from "@/libs/previewImage";
 import { set } from "react-hook-form";
+import { ST } from "next/dist/shared/lib/utils";
 
 export default function Exam({
   params: paramsPromise,
@@ -19,21 +20,16 @@ export default function Exam({
   const [exams, setExams] = useState<Exam[]>([]);
   const [previousId, setPreviousId] = useState<string | null>(null);
   const [nextId, setNextId] = useState<string | null>(null);
-  
+
   useEffect(() => {
-    
-    console.log("Exam ID:", params.id);
-    console.log("Exam Type:", params.type);
     try {
       const fetchExam = async () => {
-        const res2 = await getExam(params.id,params.type);
+        const res2 = await getExam(params.id, params.type);
         if (res2) {
           console.log("Exam Data:", res2.data);
           setExam(res2.data.currentExam);
-          if( res2.data.previousExamId) 
-            setPreviousId(res2.data.previousExamId)
-          if( res2.data.nextExamId)
-            setNextId(res2.data.nextExamId);
+          if (res2.data.previousExamId) setPreviousId(res2.data.previousExamId);
+          if (res2.data.nextExamId) setNextId(res2.data.nextExamId);
         } else {
           console.error("No data found for the specified type.");
         }
@@ -45,8 +41,11 @@ export default function Exam({
   }, []);
 
   return (
-    <div className="min-h-screen  bg-white py-12 px-4 sm:px-6 lg:px-8  ">
-      <h1 className="text-2xl font-bold text-blue-900 mb-6">{exam?.name}</h1>
+    <div className="flex-1  bg-white py-12 px-4 sm:px-6 lg:px-8  ">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-blue-900 mb-6">{exam?.name}</h1>
+        <Stopwatch />
+      </div>
       <div className="flex  gap-3 items-center justify-center">
         {exam && (
           <ImagePreview

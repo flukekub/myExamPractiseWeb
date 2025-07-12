@@ -7,9 +7,15 @@ import NextAuthProvider from "@/providers/NextAuthProvider";
 import ReduxProvider from "@/redux/ReduxProvider";
 import dynamic from "next/dynamic";
 import ToasterProvider from "@/providers/ToasterProvider"
+import { StopwatchProvider } from "@/providers/StopWatchProvider";
+import { Sarabun } from "next/font/google";
 
 
-const inter = Inter({ subsets: ["latin"] });
+
+const sarabun = Sarabun({
+  subsets: ["thai", "latin"],
+  weight: ["400", "700"],
+});
 
 export const metadata: Metadata = {
   title: "ExamSphere",
@@ -27,12 +33,14 @@ export default async function RootLayout({
   
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="th">
+      <body className={sarabun.className}>
         <ReduxProvider>
           <NextAuthProvider session={session}>
-            {children}
-            <ToasterProvider />
+              <StopwatchProvider>
+                {children}
+              </StopwatchProvider>
+              <ToasterProvider />
           </NextAuthProvider>
         </ReduxProvider>
       </body>
