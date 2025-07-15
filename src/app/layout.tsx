@@ -9,7 +9,7 @@ import dynamic from "next/dynamic";
 import ToasterProvider from "@/providers/ToasterProvider"
 import { StopwatchProvider } from "@/providers/StopWatchProvider";
 import { Sarabun } from "next/font/google";
-
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 
 const sarabun = Sarabun({
@@ -39,6 +39,7 @@ export default async function RootLayout({
           <NextAuthProvider session={session}>
               <StopwatchProvider>
                 {children}
+                <SpeedInsights />
               </StopwatchProvider>
               <ToasterProvider />
           </NextAuthProvider>
