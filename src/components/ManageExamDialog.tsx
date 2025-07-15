@@ -48,7 +48,6 @@ export default function ManageExamDialog({
         Cookies.get("token") ?? ""
       );
       console.log("Exam created successfully", res);
-      handleClose();
     } catch (error) {
       console.error("Error creating exam:", error);
     }
