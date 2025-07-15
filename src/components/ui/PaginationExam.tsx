@@ -32,7 +32,7 @@ export default function PaginationExam({
             <PaginationPrevious
               href="#"
               className="px-6 py-3 text-lg font-medium bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg "
-              style={{ borderRadius: '0.5rem' }}
+              style={{ borderRadius: "0.5rem" }}
             />
           </PaginationItem>
         )}
@@ -40,8 +40,10 @@ export default function PaginationExam({
           <PaginationItem key={index + 1}>
             <PaginationLink
               href="#"
-              className="px-4 py-3 text-lg font-medium min-w-[3rem] h-12 bg-gray-200 rounded-lg"
-              style={{ borderRadius: '0.5rem' }}
+              className={`px-4 py-3 text-lg font-medium min-w-[3rem] h-12 rounded-lg ${
+                currentPage === index + 1 ? "bg-gray-400" : "bg-gray-200"
+              }`}
+              style={{ borderRadius: "0.5rem" }}
               onClick={(e) => {
                 e.preventDefault();
                 onClick(`${index + 1}`);
@@ -63,7 +65,7 @@ export default function PaginationExam({
             <PaginationNext
               href="#"
               className="px-6 py-3 text-lg font-medium bg-gradient-to-r from-gray-300 to-gray-200 rounded-lg"
-              style={{ borderRadius: '0.5rem' }}
+              style={{ borderRadius: "0.5rem" }}
             />
           </PaginationItem>
         )}
