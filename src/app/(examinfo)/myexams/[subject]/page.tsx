@@ -37,19 +37,22 @@ export default function MathTopics({
         </h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {topics.map((topic, index) => (
-            <Link
-              href={params.subject + "/" + topic + "/choosemode"}
-              key={index}
-            >
-              <div
+          {topics.length > 0 ? (
+            topics.map((topic, index) => (
+              <Link
+                href={params.subject + "/" + topic + "/choosemode"}
                 key={index}
-                className="bg-blue-100 hover:bg-blue-200 text-blue-900 p-6 rounded-xl shadow-sm transition cursor-pointer flex items-center gap-4"
               >
-                <h2 className="text-lg font-semibold">{topic}</h2>
-              </div>
-            </Link>
-          ))}
+                <div className="bg-blue-100 hover:bg-blue-200 text-blue-900 p-6 rounded-xl shadow-sm transition cursor-pointer flex items-center gap-4">
+                  <h2 className="text-lg font-semibold">{topic}</h2>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <div className="text-center text-gray-500 text-xl font-medium">
+              Coming Soon ...
+            </div>
+          )}
         </div>
       </div>
     </main>
