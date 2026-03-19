@@ -1,76 +1,68 @@
 "use client";
-
+import { motion, AnimatePresence } from "framer-motion";
+import { BookOpen } from "lucide-react";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import LinearProgress from "@mui/material/LinearProgress";
-import getSubjects from "@/libs/api/getSubjects";
-import type { Subject } from "../../../../interface.ts";
+import { SubjectCard } from "@/components/mainPage/SubjectCard";
+import { BEZIER, containerVariants } from "@/libs/constant";
+import { useSubjects } from "@/app/hook/tanstack";
 
-
-export default function MyExam() {
+export default function Index() {
   const router = useRouter();
-  const [load, setLoad] = useState(false);
+  const { data: subjects = [], isLoading, isError } = useSubjects();
 
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-
-  const handleSubmit = (endpoint: string) => {
-    router.push(endpoint);
+  const handleSelect = (path: string) => {
+    router.push(path);
   };
 
-  useEffect(() => {
-    const fetchSubjects = async () => {
-      setLoad(true);
-      try {
-        const res = await getSubjects();
-        if (!subjects) {
-          console.error("Failed to fetch subjects");
-        }
-        setSubjects(res.data);
-      } catch (error) {
-        console.error("Error fetching subjects:", error);
-      } finally {
-        setLoad(false);
-      }
-    };
-    fetchSubjects();
-  }, []);
-
-  const colors = [
-    "from-pink-400 to-red-500",
-    "from-blue-400 to-blue-600",
-    "from-green-400 to-emerald-600",
-  ];
+  if (isError) return <div>Failed to load subjects. Please try again.</div>;
 
   return (
-    <main className=" py-16 px-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-12 text-gray-800">
-          Choose Your Exam Category
-        </h1>
-        {
-          load && (
-            <div className="mb-6">
-              <LinearProgress color="primary" />
-            </div>
-          )
-        }
-        <div className="grid md:grid-cols-3 gap-8">
-          {subjects &&
-            subjects.map((subject, index) => (
-              <div
-                key={index}
-                className={`bg-gradient-to-r ${colors[index]} text-white rounded-2xl shadow-lg p-8 hover:scale-105 transition-transform cursor-pointer`}
-                onClick={() => {
-                  setLoad(true);
-                  handleSubmit(`/myexams/${subject.title}`);
-                }}
-              >
-                <h2 className="text-2xl font-semibold mb-3">{subject.title}</h2>
-                <p className="text-sm opacity-90">{subject.description}</p>
-              </div>
-            ))}
-        </div>
-      </div>
-    </main>
+    <div className="min-h-svh bg-background text-foreground selection:bg-primary/10 antialiased">
+      <main className="max-w-[1100px] mx-auto px-6 py-20 lg:py-20">
+        <header className="mb-16 space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: BEZIER }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[13px] font-medium tracking-wide uppercase"
+          >
+            <BookOpen size={14} />
+            <span>Curriculum 2026</span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: BEZIER }}
+            className="text-4xl md:text-5xl font-semibold tracking-[-0.03em] leading-[1.1] max-w-2xl"
+          >
+            Select your examination category to begin.
+          </motion.h1>
+        </header>
+
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <LoadingSkeleton key="skeleton" />
+          ) : (
+            <motion.div
+              key="grid"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            >
+              {subjects.map((subject) => (
+                <SubjectCard
+                  key={subject.title}
+                  subject={subject}
+                  onSelect={() => handleSelect(`/myexams/${subject.title}`)}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+    </div>
   );
 }

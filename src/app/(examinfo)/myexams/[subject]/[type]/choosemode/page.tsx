@@ -1,7 +1,6 @@
 "use client";
-import { RootState } from "@/redux/store";
 import { usePathname } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setExamInfo, resetScore } from "@/redux/features/scoreSlice";
 import { useRouter } from "next/navigation";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -13,17 +12,16 @@ export default function ChooseModePage({
 }: {
   params: Promise<{ type: string }>;
 }) {
-  const params = use(paramsPromise); // Unwrap the params Promise
+  const params = use(paramsPromise); 
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const ScoreState = useSelector((state: RootState) => state.scoreState);
   const router = useRouter();
   const [ load, setLoad ] = useState(false);
   const { reset } = useStopwatch();
 
   function handlePractice(e: React.MouseEvent) {
     e.preventDefault();
-    reset(); // Reset the stopwatch state
+    reset(); 
     setLoad(true);
     dispatch(resetScore());
     dispatch(

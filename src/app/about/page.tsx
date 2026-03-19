@@ -4,21 +4,18 @@ export default function About() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <section id="about" className="py-20 px-6">
         <div className="max-w-4xl mx-auto">
-          {/* Header Section */}
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold mb-6 text-gray-800 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              About ExamSphere
+              About my web
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
           </div>
 
           {/* Main Content */}
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 relative overflow-hidden">
-            {/* Background decoration */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full -translate-y-16 translate-x-16 opacity-50"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-100 to-pink-100 rounded-full translate-y-12 -translate-x-12 opacity-50"></div>
 
-            {/* Profile Section */}
             <div className="relative">
               <div className="flex items-center justify-center mb-8">
                 <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">

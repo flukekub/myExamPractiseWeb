@@ -1,81 +1,79 @@
 "use client";
 import * as React from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
-import CreateExamForm from "./ExamForm";
+import { 
+  Dialog, DialogTitle, DialogContent, IconButton, Typography, Box 
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@mui/material/IconButton";
-import { set } from "react-hook-form";
-import createExam from "@/libs/api/createExam";
-import { ExamInputType } from "./ExamForm";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
+import createExam from "@/libs/api/createExam";
+import ExamForm, { ExamInputType } from "./ExamForm";
 
 interface ManageExamDialogProps {
   open: boolean;
   onClose: () => void;
-  onSave: () => void;
 }
 
-export default function ManageExamDialog({
-  open,
-  onClose,
-  onSave,
-}: ManageExamDialogProps) {
-  const handleClose = () => {
-    onClose();
-  };
+export default function ManageExamDialog({ open, onClose }: ManageExamDialogProps) {
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (data: ExamInputType) => {
-    try {
-      if (!data.image) {
-        return;
-      }
-      if (!data.answerImage) {
-        return;
-      }
-      const res = await createExam(
+  // TanStack Mutation
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: ExamInputType) => {
+      return createExam(
         data.name,
-        data.image,
+        data.image!,
         data.answer,
         data.subject,
         data.topic,
         data.difficulty ?? "",
-        data.answerImage,
+        data.answerImage!,
         data.choices,
         Cookies.get("token") ?? ""
       );
-      console.log("Exam created successfully", res);
-    } catch (error) {
-      console.error("Error creating exam:", error);
+    },
+    onSuccess: () => {
+      // Refresh the 'exams' list automatically
+      queryClient.invalidateQueries({ queryKey: ["exams"] });
+      onClose();
+    },
+    onError: (error) => {
+      console.error("Mutation Error:", error);
+      alert("Failed to create exam. Please try again.");
     }
-  };
+  });
+
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ m: 0, p: 2 }}>
-        Manage Exam
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: { borderRadius: "20px", padding: 1 }
+      }}
+    >
+      <DialogTitle sx={{ m: 0, p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box>
+          <Typography variant="h5" fontWeight="800" color="primary.main">
+            Create New Exam
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Fill in the details below to add a new question to the database.
+          </Typography>
+        </Box>
         <IconButton
-          aria-label="close"
-          onClick={handleClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-          size="large"
+          onClick={onClose}
+          sx={{ color: (theme) => theme.palette.grey[400] }}
         >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent className="flex flex-col gap-4 py-4">
-        <CreateExamForm
-          onSubmit={(data) => {
-            handleSubmit(data);
-            onSave();
-          }}
+
+      <DialogContent dividers sx={{ borderBottom: 'none', px: 3 }}>
+        <ExamForm 
+          onSubmit={(data: ExamInputType) => mutate(data)} 
+          isSubmitting={isPending} 
         />
       </DialogContent>
     </Dialog>

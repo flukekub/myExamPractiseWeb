@@ -6,10 +6,6 @@ export default async function getTypeExam(subject: string) {
     }
   );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch exam data");
-  }
-
   const data = await res.json();
   return data;
 }

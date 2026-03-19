@@ -1,112 +1,131 @@
 "use client";
-import { useEffect, useState, use } from "react";
-import type { Exam } from "../../../../../../../../interface";
-import getExamsByType from "@/libs/api/getExamsByType";
-import { DiEnvato } from "react-icons/di";
+import { use, useEffect } from "react";
 import Link from "next/link";
-import Button from "@mui/material/Button";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
-import { setExamInfo, resetScore, setTotal } from "@/redux/features/scoreSlice";
+import { setExamInfo, setTotal } from "@/redux/features/scoreSlice";
 import Stopwatch from "@/components/Timer";
+import {
+  ArrowLeft,
+  ChevronRight,
+  CheckCircle2,
+  ClipboardList,
+} from "lucide-react";
+import { containerVariants, itemVariants } from "@/libs/constant";
+import { ExamSkeleton } from "@/components/ExamSkeleton";
+import { useExams } from "@/app/hook/tanstack";
 
-export default function examsType({
+export default function ExamsType({
   params: paramsPromise,
 }: {
   params: Promise<{ subject: string; type: string }>;
 }) {
-  const params = use(paramsPromise); // Unwrap the params Promise
-  const [exams, setExams] = useState<Exam[]>([]);
-  const [loading, setLoading] = useState(true);
+  const params = use(paramsPromise);
   const dispatch = useDispatch();
-  const ScoreState = useSelector((state: RootState) => state.scoreState);
 
-  useEffect(() => {
-    const fetchExams = async () => {
-      try {
-        const res = await getExamsByType(params.type);
-        if (res) {
-          setExams(res.data);
-          dispatch(setTotal(res.data.length));
-          dispatch(
-            setExamInfo({
-              type: params.type,
-              subject: params.subject,
-              createdAt: new Date().toISOString(),
-            })
-          );
-          console.log("ScoreState:", ScoreState);
-        } else {
-          console.error("No data found for the specified type.");
-        }
-      } catch (error) {
-        console.error("Error fetching exams:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchExams();
-  }, [dispatch, params.type]);
+  // 1. Fetch data using TanStack Query
+  const { data: exams = [], isLoading } = useExams(params.type);
 
+  // 2. Handle Redux side effects when data arrives
   useEffect(() => {
-    console.log("Updated ScoreState:", ScoreState);
-  }, [ScoreState]);
+    if (exams.length > 0) {
+      dispatch(setTotal(exams.length));
+      dispatch(
+        setExamInfo({
+          type: params.type,
+          subject: params.subject,
+          createdAt: new Date().toISOString(),
+        })
+      );
+    }
+  }, [exams, params.type, params.subject, dispatch]);
 
   return (
-    <div className="min-h-screen bg-white py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-white via-blue-50 to-gray-100">
-      <div className="flex width-full justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-900 ">
-          Exams for {decodeURIComponent(params.type)}
-        </h1>
-        <Stopwatch />
-      </div>
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {exams.map((exam, index) => (
-              <Link
-                key={index}
-                href={`/myexams/${params.subject}/${params.type}/choosemode/mockState/${exam._id}`}
-              >
-                <div
-                  key={index}
-                  className="h-24 bg-blue-100 hover:bg-blue-200 text-blue-900 px-4 py-3 rounded-xl shadow-md transition duration-200 cursor-pointer flex items-center gap-3"
-                >
-                  <div className="text-blue-700">
-                    <DiEnvato size={28} />
-                  </div>
-                  <h2 className="text-lg font-semibold truncate">
-                    {exam.name}
-                  </h2>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-10 flex gap-5">
-            <Button
-              variant="contained"
-              color="secondary"
-              className="!rounded-full !px-8 !py-3 !text-lg !font-normal !text-white bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg hover:from-purple-600 hover:to-pink-600 transition duration-300"
+    <div className="min-h-screen bg-[#f8fafc] pb-20">
+      {/* Header Section */}
+      <div className="bg-white border-b border-slate-200 sticky top-[64.8px] z-50 backdrop-blur-md bg-white/80">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+          <div className="flex flex-col">
+            <Link
               href={`/myexams/${params.subject}`}
+              className="flex items-center gap-1 text-xs text-slate-500 hover:text-primary transition-colors mb-1"
             >
-              Go Back
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              className="!rounded-full !px-8 !py-3 !text-lg !font-normal !text-white bg-gradient-to-r from-green-500 to-yellow-400 shadow-lg hover:from-green-600 hover:to-blue-400 transition duration-300"
-              href={`/myexams/${params.subject}/${params.type}/choosemode/mockState/conclude`}
-            >
-              conclude Score
-            </Button>
+              <ArrowLeft size={14} /> Back to {params.subject}
+            </Link>
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900 flex items-center gap-2">
+              <ClipboardList className="text-primary" size={24} />
+              {decodeURIComponent(params.type)}
+            </h1>
           </div>
-        </>
-      )}
+          <div className="bg-slate-100 px-4 py-2 rounded-2xl border border-slate-200 shadow-sm">
+            <Stopwatch />
+          </div>
+        </div>
+      </div>
+
+      <main className="max-w-7xl mx-auto px-6 pt-10">
+        {isLoading ? (
+          <ExamSkeleton />
+        ) : (
+          <>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            >
+              {exams.map((exam, index) => (
+                <motion.div key={exam._id || index} variants={itemVariants}>
+                  <Link
+                    href={`/myexams/${params.subject}/${params.type}/choosemode/mockState/${exam._id}`}
+                  >
+                    <div className="group relative bg-white border border-slate-200 p-5 rounded-2xl hover:border-primary/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 flex flex-col justify-between h-36">
+                      <div className="flex items-start justify-between">
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-slate-400 font-bold text-sm flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300 shadow-sm">
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
+
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
+                            Start Exam
+                          </span>
+                          <ChevronRight size={14} className="text-primary" />
+                        </div>
+                      </div>
+                      <h2 className="text-[15px] font-semibold text-slate-800 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                        {exam.name}
+                      </h2>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Bottom Actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-12 flex flex-col sm:flex-row items-center gap-4 border-t border-slate-200 pt-8"
+            >
+              <Link
+                href={`/myexams/${params.subject}/${params.type}/choosemode/mockState/conclude`}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-semibold shadow-lg shadow-slate-200 hover:bg-slate-800 hover:-translate-y-0.5 transition-all"
+              >
+                <CheckCircle2 size={20} />
+                Conclude Score
+              </Link>
+
+              <Link
+                href={`/myexams/${params.subject}`}
+                className="w-full sm:w-auto flex items-center justify-center px-8 py-3.5 bg-white text-slate-600 border border-slate-200 rounded-2xl font-semibold hover:bg-slate-50 transition-all"
+              >
+                Go Back
+              </Link>
+            </motion.div>
+          </>
+        )}
+      </main>
     </div>
   );
 }
