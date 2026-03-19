@@ -1,12 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 import { 
   BookOpen, 
   Home, 
   UserPlus, 
-  LogIn, 
   LogOut, 
   ShieldCheck,
   GraduationCap 
@@ -16,7 +14,6 @@ import useCustomAuth from "@/libs/customHooks/useCustomAuth";
 export default function Navbar() {
   const customAuth = useCustomAuth();
   const pathname = usePathname();
-
   // Helper to style active links
   const isActive = (path: string) => pathname === path;
 

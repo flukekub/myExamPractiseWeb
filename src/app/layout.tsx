@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { auth } from "@/auth";
 import "./globals.css";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./[...nextauth]/authOptions";
-import NextAuthProvider from "@/providers/NextAuthProvider";
+import { SessionProvider } from "next-auth/react";
 import ReduxProvider from "@/redux/ReduxProvider";
-import dynamic from "next/dynamic";
 import ToasterProvider from "@/providers/ToasterProvider";
 import { StopwatchProvider } from "@/providers/StopWatchProvider";
 import { Sarabun } from "next/font/google";
@@ -29,20 +26,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   return (
     <html lang="th">
       <body className={sarabun.className}>
         <TanstackProvider>
           <ReduxProvider>
-            <NextAuthProvider session={session}>
+            <SessionProvider session={session}>
               <StopwatchProvider>
                 {children}
                 <SpeedInsights />
               </StopwatchProvider>
               <ToasterProvider />
-            </NextAuthProvider>
+            </SessionProvider>
           </ReduxProvider>
         </TanstackProvider>
       </body>

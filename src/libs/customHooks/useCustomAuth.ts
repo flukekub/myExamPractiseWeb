@@ -9,7 +9,7 @@ export default function useCustomAuth() {
   const isAdmin = Cookies.get("isAdmin");
 
   if (session && status === "authenticated") {
-    return {session, isAdmin};
+    return {session, isAdmin: isAdmin === "true"};
   } else if (token) {
     return { token, username, isAdmin: isAdmin === "true" };
   } else {

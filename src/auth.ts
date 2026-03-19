@@ -1,10 +1,10 @@
 import NextAuth from "next-auth";
 import EmailProvider from "next-auth/providers/email";
-import { AuthOptions } from "next-auth";
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/libs/mongodb";
 
-export const authOptions: AuthOptions = {
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     EmailProvider({
@@ -17,26 +17,21 @@ export const authOptions: AuthOptions = {
         },
       },
       from: process.env.EMAIL_FROM,
-      // ✅ เพิ่ม custom sendVerificationRequest
       async sendVerificationRequest({ identifier, url, provider }) {
         const { createTransport } = await import("nodemailer");
-
-        const transport = createTransport(provider.server);
+        const transport = createTransport(provider.server as any);
         await transport.sendMail({
           to: identifier,
           from: provider.from,
-          subject: "Sign in to YourApp",
-          text: `Sign in to YourApp: ${url}`,
+          subject: "Sign in to OnlineExam",
+          text: `Sign in to OnlineExam: ${url}`,
           html: `<p>Click the link to sign in:</p><p><a href="${url}">${url}</a></p>`,
         });
       },
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: "jwt", 
   },
   secret: process.env.NEXTAUTH_SECRET,
-};
-
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+});
